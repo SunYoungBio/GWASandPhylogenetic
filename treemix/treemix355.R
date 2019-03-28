@@ -5,7 +5,7 @@ install.packages("rmarkdown")
 install.packages("kableExtra")
 install.packages("beanplot")
 
-library("BITE")
+library("BITE")#github 下载，手动安装
 setwd("F:/yangyang/projects/dangxiaojing/treemix/350sample/")
 
 #source("F:/yangyang/software/treemix-1.13/src/plotting_funcs.R")
