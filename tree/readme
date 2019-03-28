@@ -1,1 +1,19 @@
 多种方法使用SNP信息构建进化树，使用ggtree美化树型
+	1. 安装包
+	source("https://bioconductor.org/biocLite.R")
+biocLite("ggtree")
+	# 加载R包
+library("ggtree")
+
+ggtree(tree, layout="fan", ladderize = FALSE, branch.length = "none",aes(color=group)) + geom_tiplab2(size=3) + theme(legend.position = "right")
+	2. BiocManager最新安装：
+		BiocManager::install("ggtree")
+		if (!requireNamespace("BiocManager", quietly=TRUE))
+		  install.packages("BiocManager")
+		
+		if (!requireNamespace("BiocManager", quietly = TRUE))
+		  install.packages("BiocManager")
+		BiocManager::install("treeio", version = "3.8")   #安装最新版本1.6
+		
+	3. devtools::install_github("GuangchuangYu/treeio")   #安装GitHub上研发版本treeio 1.7
+
