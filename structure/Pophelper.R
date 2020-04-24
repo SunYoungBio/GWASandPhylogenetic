@@ -8,25 +8,53 @@ setwd("F:/yangyang/projects/qizengjun/admixture/")
 afiles <- list.files(path="Q/",pattern="Q$", full.names = T)
 afiles
 
+#这种添加样本名称的方法好像不行了！！官网说indlabfromfile 函数只能在STRUCTURE上能用，而且是布尔值！！！以前怎么这样可以？
 sample.name=read.table("sample.classify.txt",as.is = T,row.names = 1)
 head(sample.name)
 slist <- readQ(files = afiles,indlabfromfile = sample.name)
-
-
-tr1 <- tabulateQ(qlist = slist)
-summariseQ(tr1, writetable = TRUE)
+#用官网方法：
+inds <- read.delim(system.file("files/structureindlabels.txt",package="pophelper"),header=FALSE,stringsAsFactors=F)
+# add indlab to one run
+rownames(slist[[1]]) <- inds$V1
+# if all runs are equal length, add indlab to all runs
+if(length(unique(sapply(slist,nrow)))==1) slist <- lapply(slist,"rownames<-",inds$V1)
+# show row names of all runs and all samples
+lapply(slist, rownames)
+#分别画一个和多个方法：
+	p1 <- plotQ(slist1[1],
+	returnplot=T,#必须要有返回画图，否则没有图产生
+	exportplot=F,quiet=T,basesize=11,
+            showindlab=T,#若单独使用这个参数，将会使用序号作为标签
+	            useindlab=T,#使用rowname作为标签
+	            showyaxis=T)
+	p2 <- plotQ(slist1[c(1,3)],imgoutput="join",returnplot=T,exportplot=F,quiet=T,basesize=11,
+            showindlab=T,useindlab=T,showyaxis=T,panelspacer=0.3)
 
 ##所有的K值结果画在一起
 plotQ(slist[7:9], sortind = "all", imgtype = "pdf", ordergrp = F, 
       imgoutput = "join", width = 100, outputfilename = paste0("structure_barplot1"), 
       showindlab=T, indlabsize = 0.5, indlabheight = 0.1,sharedindlab=F)
 ##画指定K值的结果
-row.names(slist[[7]])=sample.name
+##现在无效了
+rownames(slist[[7]])=sample.name
 
 onelabset1 <- sample.name[,2,drop=FALSE]
 head(onelabset1)
 plotQMultiline(slist[7], imgtype = "pdf", sortind = "all", grplab=onelabset1,
                useindlab = T, width = 80, height = 15, indlabsize = 6, spl = 453)
+
+#批量写入标签到文件两种方法代码：
+	x=p2$data$qlist
+	x
+	lapply(x,write.table,"test.txt",
+	append=T, #写入同一个文件
+	quote = F,sep="\t")
+	
+	for(i in 1:length(x)){
+	  write.table(x[[i]], file=paste0(names(x)[i],"_ind.txt"), #写入多个文件
+	quote = F,sep = "\t",col.names = F) 
+}
+
 
 # sorted by cluster 1
 plotQ(slist[c(7,9)], sortind="Cluster1")
